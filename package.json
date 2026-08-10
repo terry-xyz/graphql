@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "node tests/login-selectors.test.mjs && node tests/auth.test.mjs && node tests/graphql.test.mjs"
+  }
+}
