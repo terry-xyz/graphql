@@ -7,14 +7,39 @@
     <title>GraphQl</title>
 </head>
 <body>
+    <nav id="navbar">
+        <button id="navbar-identity">Identity</button>
+        <button id="navbar-xpLevel">XP / Level</button>
+    </nav>
+
     <h1>GraphQl</h1>
 
     <form id="login-form">
-        <input class="login-identifier" type="text" required placeholder="username or email" />
-        <input class="login-password" type="password" required placeholder="password" />
-        <button class="submit-login-form-button" type="submit">LOG-IN</button>
-        <div class="login-feedback"></div>
+        <input id="login-identifier" type="text" required placeholder="username or email" />
+        <input id="login-password" type="password" required placeholder="password" />
+        <button id="submit-login-form-button" type="submit">LOG-IN</button>
+        <div id="login-feedback"></div>
     </form>
+
+    <section id="identity-section" hidden>
+        <h2>Identity</h2>
+        <p>First Name: <span id="identity-firstName"></span></p>
+        <p>Last Name: <span id="identity-lastName"></span></p>
+        <p>Login: <span id="identity-login"></span></p>
+        <p>E-mail: <span id="identity-email"></span></p>
+        <p>Campus: <span id="identity-campus"></span></p>
+        <!-- Add avatar-url, labelName (cohort) and more later -->
+    </section>
+
+    <section id="xpLevel-section" hidden>
+        <h2>XP / Level</h2>
+        <p>Total XP: <span id="xpLevel-totalXp"></span></p>
+        <p>Current/Max Level: <span id="xpLevel-currentMaxLevel"></span></p>
+        <p>Biggest XP Gain: <span id="xpLevel-biggestXpGain"></span></p>
+        <!-- Add more later -->
+    </section>
+
+    <button id="logout-button">Logout</button>
 
     <script src="src/main.js" type="module"></script>
 </body>
