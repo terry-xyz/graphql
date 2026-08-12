@@ -1,20 +1,20 @@
 import { signIn } from "./auth.js";
+import { basicQuery, CURRENT_SECTION, maxIdentityDataQuery, PREVIOUS_SECTION, UpdateSectionState } from "./config.js";
 import { graphqlRequest } from "./graphql.js";
+import { renderDataSection } from "./renderer.js";
 
-const basicQuery = `
-    {
-        user {
-            id
-            login
-        }
-    }
-`
+const NavbarIdentity = document.querySelector("#navbar-identity");
+const NavbarXpLevel = document.querySelector("#navbar-xpLevel");
 
 const LogInForm = document.querySelector("#login-form");
-const LogInIdentifier = document.querySelector(".login-identifier");
-const LogInPassword = document.querySelector(".login-password");
-const LogInFeedback = document.querySelector(".login-feedback");
+const LogInIdentifier = document.querySelector("#login-identifier");
+const LogInPassword = document.querySelector("#login-password");
+const LogInFeedback = document.querySelector("#login-feedback");
+const LogoutButton = document.querySelector("#logout-button");
 
+let maxIdentityData = null;
+
+// log-in process
 LogInForm.addEventListener("submit", async e => {
     e.preventDefault();
 
@@ -37,11 +37,43 @@ LogInForm.addEventListener("submit", async e => {
 
         localStorage.setItem("jwt", token);
 
+        LogInForm.hidden = true;
         LogInFeedback.textContent = "Logged in successfully!";
 
-        const data = await graphqlRequest(basicQuery);
-        console.log(data)
+        const basicData = await graphqlRequest(basicQuery);
+        const user = basicData.user[0];
+
+        maxIdentityData = await graphqlRequest(maxIdentityDataQuery, {
+            userId: user.id,
+        });
+        console.log(maxIdentityData);
+
+        renderDataSection(maxIdentityData);
     } catch (error) {
         LogInFeedback.textContent = error.message;
     }
+});
+
+// log-out process
+LogoutButton.addEventListener("click", e => {
+    localStorage.removeItem("jwt");
+
+    renderDataSection();
+
+    LogInIdentifier.value = "";
+    LogInPassword.value = "";
+    LogInFeedback.textContent = "";
+    LogInForm.hidden = false;
+});
+
+NavbarIdentity.addEventListener("click", e => {
+    UpdateSectionState("identity");
+
+    renderDataSection(maxIdentityData);
+});
+
+NavbarXpLevel.addEventListener("click", e => {
+    UpdateSectionState("xpLevel");
+
+    renderDataSection(maxIdentityData);
 });
