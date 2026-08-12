@@ -35,7 +35,8 @@ try {
       }
     }
   `;
-  const data = await graphqlRequest(query);
+  const variables = { userId: 42 };
+  const data = await graphqlRequest(query, variables);
 
   assert.deepEqual(data, {
     user: [{ id: 42, login: "student" }],
@@ -48,6 +49,7 @@ try {
   });
   assert.deepEqual(JSON.parse(request.options.body), {
     query,
+    variables,
   });
 } finally {
   globalThis.fetch = originalFetch;
