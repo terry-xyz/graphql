@@ -1,13 +1,40 @@
 import assert from "node:assert/strict";
 import { UpdateSectionState } from "../src/config.js";
 
-function createElement(id, hidden = true) {
+// createElement provides the small subset of DOM and SVG behaviour that renderer.js needs during tests.
+function createElement(id, hidden = true, tagName = "") {
+  let textContent = "";
+
   return {
     id,
+    tagName,
     hidden,
     className: "",
-    textContent: "",
+    get textContent() {
+      return textContent;
+    },
+    set textContent(value) {
+      textContent = String(value);
+    },
     value: "",
+    attributes: {},
+    children: [],
+    eventListeners: {},
+    setAttribute(name, value) {
+      this.attributes[name] = String(value);
+    },
+    append(...children) {
+      this.children.push(...children);
+    },
+    addEventListener(eventName, listener) {
+      this.eventListeners[eventName] = listener;
+    },
+    replaceChildren(...children) {
+      this.children = [...children];
+    },
+    getBBox() {
+      return { width: this.textContent.length * 9 };
+    },
   };
 }
 
@@ -27,12 +54,14 @@ const elements = new Map(
     ["xpLevel-totalXp", createElement("xpLevel-totalXp", false)],
     ["xpLevel-currentMaxLevel", createElement("xpLevel-currentMaxLevel", false)],
     ["xpLevel-biggestXpGain", createElement("xpLevel-biggestXpGain", false)],
+    ["xp-chart", createElement("xp-chart", false, "svg")],
     ["audits-section", createElement("audits-section", true)],
     ["audits-ratio", createElement("audits-ratio", false)],
     ["audits-xpGiven", createElement("audits-xpGiven", false)],
     ["audits-xpReceived", createElement("audits-xpReceived", false)],
     ["audits-bonusXp", createElement("audits-bonusXp", false)],
     ["audits-warning", createElement("audits-warning", false)],
+    ["audits-chart", createElement("audits-chart", false, "svg")],
     ["logout-button", createElement("logout-button", false)],
   ],
 );
@@ -40,12 +69,16 @@ const elements = new Map(
 const originalDocument = globalThis.document;
 
 try {
+  // The fake document keeps renderer tests independent from a browser while preserving selector failures.
   globalThis.document = {
     querySelector(selector) {
       assert.match(selector, /^#/);
       const element = elements.get(selector.slice(1));
       assert.ok(element, `Missing test element for ${selector}`);
       return element;
+    },
+    createElementNS(_namespace, elementName) {
+      return createElement("", false, elementName);
     },
   };
 
@@ -72,6 +105,14 @@ try {
       },
     },
     levelTransactions: [{ amount: 32 }],
+    // One large gain between small gains creates a predictable bottom and top corner for marker tests.
+    xpTransactions: [
+      { amount: 10, createdAt: "2026-01-01T00:00:00Z" },
+      { amount: 10, createdAt: "2026-01-02T00:00:00Z" },
+      { amount: 100, createdAt: "2026-01-03T00:00:00Z" },
+      { amount: 10, createdAt: "2026-01-04T00:00:00Z" },
+      { amount: 10, createdAt: "2026-01-05T00:00:00Z" },
+    ],
   };
 
   renderDataSection(data);
@@ -91,6 +132,53 @@ try {
   assert.equal(elements.get("xpLevel-totalXp").textContent, "1815857");
   assert.equal(elements.get("xpLevel-currentMaxLevel").textContent, "32");
   assert.equal(elements.get("xpLevel-biggestXpGain").textContent, "76250");
+
+  // Inspect generated SVG children because marker selection is the chart behaviour under test.
+  const xpMarkers = elements.get("xp-chart").children.filter(
+    (element) => element.attributes.class === "xp-chart-marker",
+  );
+  const xpMarkerHitAreas = elements.get("xp-chart").children.filter(
+    (element) => element.attributes.class === "xp-chart-marker-hit-area",
+  );
+  assert.equal(
+    xpMarkers.length,
+    2,
+    "A single sharp rise should mark only its bottom and top corners",
+  );
+  assert.equal(xpMarkerHitAreas.length, xpMarkers.length);
+  assert.ok(
+    xpMarkerHitAreas.every((hitArea) => hitArea.attributes.r === "5.4"),
+    "Each marker should respond across its full 1.8x hover size",
+  );
+
+  const xpTooltip = elements.get("xp-chart").children.find(
+    (element) => element.attributes.class === "xp-chart-tooltip",
+  );
+  assert.ok(xpTooltip, "The XP chart should include a custom SVG tooltip");
+  assert.equal(xpTooltip.attributes.visibility, "hidden");
+  // Native SVG title elements have delayed browser tooltips, so the chart must use its custom tooltip instead.
+  assert.equal(
+    xpMarkers.some((marker) =>
+      marker.children.some((child) => child.tagName === "title")
+    ),
+    false,
+    "Markers should not use delayed native title tooltips",
+  );
+  assert.equal(
+    xpMarkers.some((marker) =>
+      "tabindex" in marker.attributes ||
+      "focus" in marker.eventListeners ||
+      "blur" in marker.eventListeners
+    ),
+    false,
+    "Chart markers should use mouse interaction only",
+  );
+
+  // Entering and leaving the larger invisible hit area should show and hide the tooltip immediately.
+  xpMarkerHitAreas[0].eventListeners.mouseenter();
+  assert.equal(xpTooltip.attributes.visibility, "visible");
+  xpMarkerHitAreas[0].eventListeners.mouseleave();
+  assert.equal(xpTooltip.attributes.visibility, "hidden");
 
   UpdateSectionState("audits");
   renderDataSection(data);
