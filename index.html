@@ -39,7 +39,10 @@
         <p>Total XP: <span id="xpLevel-totalXp"></span></p>
         <p>Current/Max Level: <span id="xpLevel-currentMaxLevel"></span></p>
         <p>Biggest XP Gain: <span id="xpLevel-biggestXpGain"></span></p>
-        <!-- Add more later -->
+
+        <h3>XP Progression</h3>
+        <!-- JavaScript fills this responsive SVG with cumulative XP data from xpTransactions. -->
+        <svg id="xp-chart" viewBox="0 0 600 300" role="img" aria-label="XP progression over time"></svg>
     </section>
 
     <section id="audits-section" hidden>
@@ -51,6 +54,11 @@
         <p>Bonus XP: <span id="audits-bonusXp"></span></p>
 
         <p id="audits-warning"></p>
+
+        <h3>XP Given vs XP Received</h3>
+        <!-- JavaScript measures the labels and scales both audit bars within this 600-by-100 coordinate system. -->
+        <svg id="audits-chart" viewBox="0 0 600 100" role="img"
+            aria-label="Comparison of XP given and XP received"></svg>
     </section>
 
     <button id="logout-button">Logout</button>
