@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="src/style.css">
     <title>GraphQl</title>
 </head>
+
 <body>
     <nav id="navbar">
         <button id="navbar-identity">Identity</button>
         <button id="navbar-xpLevel">XP / Level</button>
+        <button id="navbar-audits">Audits</button>
     </nav>
 
     <h1>GraphQl</h1>
@@ -39,8 +42,20 @@
         <!-- Add more later -->
     </section>
 
+    <section id="audits-section" hidden>
+        <h2>Audits</h2>
+
+        <p>Audit Ratio: <span id="audits-ratio"></span></p>
+        <p>XP Given: <span id="audits-xpGiven"></span></p>
+        <p>XP Received: <span id="audits-xpReceived"></span></p>
+        <p>Bonus XP: <span id="audits-bonusXp"></span></p>
+
+        <p id="audits-warning"></p>
+    </section>
+
     <button id="logout-button">Logout</button>
 
     <script src="src/main.js" type="module"></script>
 </body>
+
 </html>
