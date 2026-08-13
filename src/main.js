@@ -5,6 +5,7 @@ import { renderDataSection } from "./renderer.js";
 
 const NavbarIdentity = document.querySelector("#navbar-identity");
 const NavbarXpLevel = document.querySelector("#navbar-xpLevel");
+const NavbarAudits = document.querySelector("#navbar-audits");
 
 const LogInForm = document.querySelector("#login-form");
 const LogInIdentifier = document.querySelector("#login-identifier");
@@ -74,6 +75,12 @@ NavbarIdentity.addEventListener("click", e => {
 
 NavbarXpLevel.addEventListener("click", e => {
     UpdateSectionState("xpLevel");
+
+    renderDataSection(maxIdentityData);
+});
+
+NavbarAudits.addEventListener("click", () => {
+    UpdateSectionState("audits");
 
     renderDataSection(maxIdentityData);
 });
