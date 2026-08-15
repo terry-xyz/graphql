@@ -1,62 +1,18 @@
-3. Audits
-     From user:
-      - auditRatio
-      - totalUp
-      - totalDown
-      - totalUpBonus
+# To Do
 
-     Your audit ratio is around 0.905, so display maybe 0.91.
+1. Make the session persistent when reloading the page.
 
-  4. Skills
-     From user.skills:
-     You have 15 skills:
-      - prog: 85
-      - go: 45
-      - front-end: 40
-      - js/html/back-end/algo: 35
-      - etc.
+2. Add a Skills section.
+   - Use `user.skills`.
+   - Display the student's skill names and values.
+   - Add an SVG bar chart with skill names on the x-axis and amounts on the y-axis.
 
-     This is very good for a visual section.
+3. Add a Progress / Projects section.
+   - Use `latestProgressByPath`, `progresses`, and `results`.
+   - Display completed project count.
+   - Display failed or unfinished project count.
+   - Display the latest completed work.
 
-  5. Progress / Projects
-     From:
-      - latestProgressByPath
-      - progresses
-      - results
-      - passedResults
-      - failedResults
-
-     Show:
-      - completed projects count
-      - failed/unfinished count
-      - latest completed work
-      - pass/fail ratio
-
-  Best Graphs To Build
-
-  For the mandatory SVG graphs, I recommend:
-
-  1. XP Over Time
-     Use xpTransactions.
-      - x-axis: createdAt
-      - y-axis: cumulative XP
-      - graph type: SVG line chart
-
-     This is probably your strongest graph.
-
-  2. Skills Bar Chart
-     Use user.skills.
-      - x-axis: skill names
-      - y-axis: amount
-      - graph type: SVG bar chart
-
-     This is easier than pass/fail and visually clear.
-
-  Optional third graph:
-
-  3. Pass/Fail Ratio
-     Use:
-      - passedResults.aggregate.count
-      - failedResults.aggregate.count
-
-     Graph type: SVG donut chart or two-bar chart.
+4. Add a pass/fail visualization.
+   - Use `passedResults.aggregate.count` and `failedResults.aggregate.count`.
+   - Display the values as an SVG donut chart or two-bar chart.
