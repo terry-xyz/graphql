@@ -17,6 +17,7 @@ try {
   globalThis.fetch = async (url, options) => {
     request = { url, options };
     return {
+      ok: true,
       async json() {
         return {
           data: {
@@ -51,6 +52,19 @@ try {
     query,
     variables,
   });
+
+  globalThis.fetch = async () => ({
+    ok: true,
+    async json() {
+      return { errors: [{ message: "Query failed" }] };
+    },
+  });
+
+  await assert.rejects(
+    () => graphqlRequest(query, variables),
+    /Query failed/,
+    "graphqlRequest should surface GraphQL errors",
+  );
 } finally {
   globalThis.fetch = originalFetch;
   globalThis.localStorage = originalLocalStorage;

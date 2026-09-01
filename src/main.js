@@ -1,5 +1,5 @@
 import { signIn } from "./auth.js";
-import { basicQuery, CURRENT_SECTION, maxIdentityDataQuery, PREVIOUS_SECTION, UpdateSectionState } from "./config.js";
+import { basicQuery, maxIdentityDataQuery, UpdateSectionState } from "./config.js";
 import { graphqlRequest } from "./graphql.js";
 import { renderDataSection } from "./renderer.js";
 
@@ -47,8 +47,6 @@ LogInForm.addEventListener("submit", async e => {
         maxIdentityData = await graphqlRequest(maxIdentityDataQuery, {
             userId: user.id,
         });
-        console.log(maxIdentityData);
-
         renderDataSection(maxIdentityData);
     } catch (error) {
         LogInFeedback.textContent = error.message;

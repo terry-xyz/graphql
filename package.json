@@ -1,6 +1,23 @@
 {
+  "name": "graphql-profile-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A static GraphQL profile dashboard for the Zone01 platform.",
   "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
-    "test": "node tests/login-selectors.test.mjs && node tests/auth.test.mjs && node tests/graphql.test.mjs && node tests/config.test.mjs && node tests/renderer.test.mjs && node tests/main-navigation.test.mjs"
-  }
+    "build": "node scripts/build.mjs",
+    "test": "node tests/login-selectors.test.mjs && node tests/auth.test.mjs && node tests/graphql.test.mjs && node tests/config.test.mjs && node tests/renderer.test.mjs && node tests/main-navigation.test.mjs",
+    "check": "npm test && node --check src/auth.js && node --check src/config.js && node --check src/graphql.js && node --check src/main.js && node --check src/renderer.js && node --check scripts/build.mjs && npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terry-xyz/graphql.git"
+  },
+  "bugs": {
+    "url": "https://github.com/terry-xyz/graphql/issues"
+  },
+  "homepage": "https://terry-xyz.github.io/graphql/"
 }
