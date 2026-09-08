@@ -3,20 +3,18 @@ import { graphqlRequest } from "../src/graphql.js";
 import { API_BASE_URL, API_GRAPHQL_ENDPOINT } from "../src/config.js";
 
 const originalFetch = globalThis.fetch;
-const originalLocalStorage = globalThis.localStorage;
+const originalDocument = globalThis.document;
 
 try {
-  globalThis.localStorage = {
-    getItem(key) {
-      assert.equal(key, "jwt");
-      return "jwt-token";
-    },
+  globalThis.document = {
+    cookie: "jwt=jwt-token",
   };
 
   let request;
   globalThis.fetch = async (url, options) => {
     request = { url, options };
     return {
+      ok: true,
       async json() {
         return {
           data: {
@@ -51,7 +49,20 @@ try {
     query,
     variables,
   });
+
+  globalThis.fetch = async () => ({
+    ok: true,
+    async json() {
+      return { errors: [{ message: "Query failed" }] };
+    },
+  });
+
+  await assert.rejects(
+    () => graphqlRequest(query, variables),
+    /Query failed/,
+    "graphqlRequest should surface GraphQL errors",
+  );
 } finally {
   globalThis.fetch = originalFetch;
-  globalThis.localStorage = originalLocalStorage;
+  globalThis.document = originalDocument;
 }

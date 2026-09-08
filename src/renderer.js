@@ -64,7 +64,7 @@ function renderXpLevelSection(data) {
     XpLevelCurrentMaxLevel.textContent = data.levelTransactions[0].amount ?? "Not available";
     XpLevelBiggestXpGain.textContent = data.xpTotal.aggregate.max.amount ?? "Not available";
 
-    renderXpChart(data.xpTransactions);
+    renderXpChart(XpChart, data.xpTransactions);
 }
 
 // renderIdentitySection displays the logged-in student's profile fields returned by the GraphQL user query.
@@ -106,5 +106,5 @@ function renderAuditsSection(data) {
         AuditsWarning.className = "audit-success";
     }
 
-    renderAuditsChart(data.user.totalUp, data.user.totalDown);
+    renderAuditsChart(AuditsChart, data.user.totalUp, data.user.totalDown);
 }

@@ -4,24 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A GraphQL-powered Zone01 student profile dashboard.">
+    <meta name="referrer" content="no-referrer">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; connect-src https://platform.zone01.gr; style-src 'self'; script-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
     <link rel="stylesheet" href="src/style.css">
-    <title>GraphQl</title>
+    <title>GraphQL Profile Dashboard</title>
 </head>
 
 <body>
-    <nav id="navbar">
-        <button id="navbar-identity">Identity</button>
-        <button id="navbar-xpLevel">XP / Level</button>
-        <button id="navbar-audits">Audits</button>
+    <nav id="navbar" aria-label="Profile sections">
+        <button id="navbar-identity" type="button">Identity</button>
+        <button id="navbar-xpLevel" type="button">XP / Level</button>
+        <button id="navbar-audits" type="button">Audits</button>
     </nav>
 
-    <h1>GraphQl</h1>
+    <h1>GraphQL Profile Dashboard</h1>
 
     <form id="login-form">
-        <input id="login-identifier" type="text" required placeholder="username or email" />
-        <input id="login-password" type="password" required placeholder="password" />
+        <label for="login-identifier">Username or email</label>
+        <input id="login-identifier" type="text" required autocomplete="username" placeholder="username or email" />
+        <label for="login-password">Password</label>
+        <input id="login-password" type="password" required autocomplete="current-password" placeholder="password" />
         <button id="submit-login-form-button" type="submit">LOG-IN</button>
-        <div id="login-feedback"></div>
+        <p id="login-feedback" role="status" aria-live="polite"></p>
     </form>
 
     <section id="identity-section" hidden>
@@ -61,7 +67,7 @@
             aria-label="Comparison of XP given and XP received"></svg>
     </section>
 
-    <button id="logout-button">Logout</button>
+    <button id="logout-button" type="button">Logout</button>
 
     <script src="src/main.js" type="module"></script>
 </body>
