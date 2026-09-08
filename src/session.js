@@ -13,8 +13,7 @@ export function getToken() {
         return null;
     }
 
-    return decodeURIComponent(cookie.slice(`${COOKIE_NAME}=`.length),
-    );
+    return decodeURIComponent(cookie.slice(`${COOKIE_NAME}=`.length));
 }
 
 export function clearToken() {

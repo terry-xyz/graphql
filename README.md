@@ -28,7 +28,7 @@ Open the local URL printed by `serve`. The app must be served over HTTP because 
 
 ## Configuration and security
 
-The Zone01 API endpoints are defined in [`src/config.js`](src/config.js). No API secrets are required or stored in this repository. Login credentials are sent directly to the configured Zone01 authentication endpoint over HTTPS, and the returned JWT is kept in a cookie for 24 hours with `SameSite=Strict` until logout or expiry.
+The Zone01 API endpoints are defined in [`src/config.js`](src/config.js). No API secrets are required or stored in this repository. Login credentials are sent directly to the configured Zone01 authentication endpoint over HTTPS, and the returned JWT is kept in a cookie with `Max-Age=86400` (24 hours), `SameSite=Strict`, and `Path=/`; the session is restored after page reloads until logout or expiry.
 
 ## Project layout
 
