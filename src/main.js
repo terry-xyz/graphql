@@ -2,6 +2,7 @@ import { signIn } from "./auth.js";
 import { basicQuery, maxIdentityDataQuery, UpdateSectionState } from "./config.js";
 import { graphqlRequest } from "./graphql.js";
 import { renderDataSection } from "./renderer.js";
+import { saveToken, getToken, clearToken } from "./session.js";
 
 const NavbarIdentity = document.querySelector("#navbar-identity");
 const NavbarXpLevel = document.querySelector("#navbar-xpLevel");
@@ -14,6 +15,17 @@ const LogInFeedback = document.querySelector("#login-feedback");
 const LogoutButton = document.querySelector("#logout-button");
 
 let maxIdentityData = null;
+
+async function loadProfile() {
+    const basicData = await graphqlRequest(basicQuery);
+    const user = basicData.user[0];
+
+    maxIdentityData = await graphqlRequest(maxIdentityDataQuery, {
+        userId: user.id,
+    });
+
+    renderDataSection(maxIdentityData);
+}
 
 // log-in process
 LogInForm.addEventListener("submit", async e => {
@@ -36,18 +48,12 @@ LogInForm.addEventListener("submit", async e => {
 
         const token = await signIn(identifier, password);
 
-        localStorage.setItem("jwt", token);
+        saveToken(token);
 
         LogInForm.hidden = true;
         LogInFeedback.textContent = "Logged in successfully!";
 
-        const basicData = await graphqlRequest(basicQuery);
-        const user = basicData.user[0];
-
-        maxIdentityData = await graphqlRequest(maxIdentityDataQuery, {
-            userId: user.id,
-        });
-        renderDataSection(maxIdentityData);
+        await loadProfile();
     } catch (error) {
         LogInFeedback.textContent = error.message;
     }
@@ -55,7 +61,7 @@ LogInForm.addEventListener("submit", async e => {
 
 // log-out process
 LogoutButton.addEventListener("click", e => {
-    localStorage.removeItem("jwt");
+    clearToken();
 
     renderDataSection();
 
@@ -82,3 +88,13 @@ NavbarAudits.addEventListener("click", () => {
 
     renderDataSection(maxIdentityData);
 });
+
+if (getToken()) {
+    LogInForm.hidden = true;
+
+    loadProfile().catch((error) => {
+        clearToken();
+        LogInForm.hidden = false;
+        LogInFeedback.textContent = error.message;
+    });
+}

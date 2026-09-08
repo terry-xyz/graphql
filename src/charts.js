@@ -1,9 +1,9 @@
-import { createSvgElement } from "./helpers.js";
+import { createSvgElement, formatXp } from "./helpers.js";
 
 // renderXpChart turns chronological XP transactions into a cumulative, interactive SVG line chart.
-export function renderXpChart(transactions) {
+export function renderXpChart(chart, transactions) {
     // The section can be opened repeatedly, so remove the previous drawing before rebuilding it.
-    XpChart.replaceChildren();
+    chart.replaceChildren();
 
     if (!transactions || transactions.length === 0) {
         return;
@@ -279,7 +279,7 @@ export function renderXpChart(transactions) {
     });
 
     // SVG paints later children above earlier ones, so markers and the tooltip sit above guides and the line.
-    XpChart.append(
+    chart.append(
         ...yGuideElements,
         xAxis,
         yAxis,
@@ -291,9 +291,9 @@ export function renderXpChart(transactions) {
 }
 
 // renderAuditsChart compares XP given and received using two bars that share the same scale.
-export function renderAuditsChart(totalUp, totalDown) {
+export function renderAuditsChart(chart, totalUp, totalDown) {
     // Reopening the Audits section should replace the old bars instead of duplicating them.
-    AuditsChart.replaceChildren();
+    chart.replaceChildren();
 
     // GraphQL values may arrive as numbers or numeric strings, so normalize them before doing chart math.
     const xpGiven = Number(totalUp) || 0;
@@ -324,7 +324,7 @@ export function renderAuditsChart(totalUp, totalDown) {
     receivedLabel.textContent = `Received: ${formatXp(xpReceived)}`;
 
     // Labels must be inside the visible SVG before getBBox can measure their rendered widths.
-    AuditsChart.append(givenLabel, receivedLabel);
+    chart.append(givenLabel, receivedLabel);
 
     // Both bars begin eight units after whichever label is wider, preventing text from overlapping a bar.
     const longestLabelWidth = Math.max(
@@ -357,5 +357,5 @@ export function renderAuditsChart(totalUp, totalDown) {
     receivedBar.setAttribute("rx", 8);
     receivedBar.setAttribute("class", "audit-chart-received");
 
-    AuditsChart.append(givenBar, receivedBar);
+    chart.append(givenBar, receivedBar);
 }

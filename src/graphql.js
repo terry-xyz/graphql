@@ -1,7 +1,8 @@
 import { API_BASE_URL, API_GRAPHQL_ENDPOINT } from "./config.js";
+import { getToken } from "./session.js";
 
 export async function graphqlRequest(query, variables) {
-    const token = localStorage.getItem("jwt");
+    const token = getToken();
 
     if (!token) {
         throw new Error("Your session has expired. Please log in again.");
