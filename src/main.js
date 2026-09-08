@@ -16,6 +16,25 @@ const LogoutButton = document.querySelector("#logout-button");
 
 let maxIdentityData = null;
 
+// Profile navigation and logout depend on loaded profile data, so keep them together for the loading gate.
+const profileControls = [
+    NavbarIdentity,
+    NavbarXpLevel,
+    NavbarAudits,
+    LogoutButton,
+];
+
+// setProfileControlsDisabled prevents actions from reading incomplete profile data during API requests.
+function setProfileControlsDisabled(disabled) {
+    for (const control of profileControls) {
+        control.disabled = disabled;
+    }
+}
+
+// The profile starts empty, so controls must wait until loadProfile has populated maxIdentityData.
+setProfileControlsDisabled(true);
+
+// loadProfile fetches the basic identity and extended profile data, then enables controls after rendering it.
 async function loadProfile() {
     const basicData = await graphqlRequest(basicQuery);
     const user = basicData.user[0];
@@ -25,6 +44,9 @@ async function loadProfile() {
     });
 
     renderDataSection(maxIdentityData);
+
+    // Rendering comes first so an enabled control always has the data it needs.
+    setProfileControlsDisabled(false);
 }
 
 // log-in process
