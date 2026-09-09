@@ -4,6 +4,7 @@ import { graphqlRequest } from "./graphql.js";
 import { renderDataSection } from "./renderer.js";
 import { saveToken, getToken, clearToken } from "./session.js";
 
+const NavbarResults = document.querySelector("#navbar-results");
 const NavbarIdentity = document.querySelector("#navbar-identity");
 const NavbarXpLevel = document.querySelector("#navbar-xpLevel");
 const NavbarAudits = document.querySelector("#navbar-audits");
@@ -21,6 +22,7 @@ const profileControls = [
     NavbarIdentity,
     NavbarXpLevel,
     NavbarAudits,
+    NavbarResults,
     LogoutButton,
 ];
 
@@ -31,6 +33,7 @@ function setProfileControlsDisabled(disabled) {
     }
 }
 
+// setProfileControlsVisible hides authenticated navigation until the profile request has supplied data for it.
 function setProfileControlsVisible(visible) {
     for (const control of profileControls) {
         control.hidden = !visible;
@@ -57,8 +60,8 @@ async function loadProfile() {
     setProfileControlsVisible(true);
 }
 
-// log-in process
-LogInForm.addEventListener("submit", async e => {
+// handleLoginSubmit authenticates the form and loads profile data so the UI never treats a token alone as a complete session.
+async function handleLoginSubmit(e) {
     e.preventDefault();
 
     const identifier = LogInIdentifier.value.trim();
@@ -85,14 +88,21 @@ LogInForm.addEventListener("submit", async e => {
 
         await loadProfile();
     } catch (error) {
-        clearToken();
-        LogInForm.hidden = false;
-        LogInFeedback.textContent = error.message;
+        handleProfileLoadFailure(error);
     }
-});
+}
 
-// log-out process
-LogoutButton.addEventListener("click", e => {
+LogInForm.addEventListener("submit", handleLoginSubmit);
+
+// handleProfileLoadFailure removes an unusable session and restores the login form when profile loading fails.
+function handleProfileLoadFailure(error) {
+    clearToken();
+    LogInForm.hidden = false;
+    LogInFeedback.textContent = error.message;
+}
+
+// handleLogout clears both the stored session and rendered profile state so a logged-out user cannot reuse stale data.
+function handleLogout() {
     clearToken();
     maxIdentityData = null;
     setProfileControlsDisabled(true);
@@ -104,32 +114,47 @@ LogoutButton.addEventListener("click", e => {
     LogInPassword.value = "";
     LogInFeedback.textContent = "";
     LogInForm.hidden = false;
-});
+}
 
-NavbarIdentity.addEventListener("click", e => {
+LogoutButton.addEventListener("click", handleLogout);
+
+// handleIdentityNavigation selects the identity view while reusing the profile fetched during login.
+function handleIdentityNavigation() {
     UpdateSectionState("identity");
 
     renderDataSection(maxIdentityData);
-});
+}
 
-NavbarXpLevel.addEventListener("click", e => {
+NavbarIdentity.addEventListener("click", handleIdentityNavigation);
+
+// handleXpLevelNavigation selects the XP view while reusing the profile fetched during login.
+function handleXpLevelNavigation() {
     UpdateSectionState("xpLevel");
 
     renderDataSection(maxIdentityData);
-});
+}
 
-NavbarAudits.addEventListener("click", () => {
+NavbarXpLevel.addEventListener("click", handleXpLevelNavigation);
+
+// handleAuditsNavigation selects the audits view while reusing the profile fetched during login.
+function handleAuditsNavigation() {
     UpdateSectionState("audits");
 
     renderDataSection(maxIdentityData);
-});
+}
+
+NavbarAudits.addEventListener("click", handleAuditsNavigation);
+
+// handleResultsNavigation selects the Results view while reusing the profile fetched during login.
+function handleResultsNavigation() {
+    UpdateSectionState("results");
+    renderDataSection(maxIdentityData);
+}
+
+NavbarResults.addEventListener("click", handleResultsNavigation);
 
 if (getToken()) {
     LogInForm.hidden = true;
 
-    loadProfile().catch((error) => {
-        clearToken();
-        LogInForm.hidden = false;
-        LogInFeedback.textContent = error.message;
-    });
+    loadProfile().catch(handleProfileLoadFailure);
 }

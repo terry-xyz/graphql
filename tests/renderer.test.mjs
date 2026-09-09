@@ -62,6 +62,14 @@ const elements = new Map(
     ["audits-bonusXp", createElement("audits-bonusXp", false)],
     ["audits-warning", createElement("audits-warning", false)],
     ["audits-chart", createElement("audits-chart", false, "svg")],
+    ["results-section", createElement("results-section", true)],
+    ["results-date-toggle", createElement("results-date-toggle", false)],
+    ["results-list", createElement("results-list", false)],
+    ["results-page-size", createElement("results-page-size", false)],
+    ["results-page-indicator", createElement("results-page-indicator", false)],
+    ["results-previous", createElement("results-previous", false)],
+    ["results-next", createElement("results-next", false)],
+    ["results-range", createElement("results-range", false)],
     ["logout-button", createElement("logout-button", false)],
   ],
 );
@@ -78,6 +86,10 @@ try {
       return element;
     },
     createElementNS(_namespace, elementName) {
+      return createElement("", false, elementName);
+    },
+    // createElement lets renderer tests inspect the HTML result cards without requiring a browser DOM.
+    createElement(elementName) {
       return createElement("", false, elementName);
     },
   };
@@ -291,6 +303,104 @@ try {
   assert.equal(elements.get("audits-xpGiven").textContent, "Not available");
   assert.equal(elements.get("audits-xpReceived").textContent, "Not available");
   assert.equal(elements.get("audits-bonusXp").textContent, "Not available");
+
+  // Result cards should show the project, derived status, type, and date in that order.
+  const resultsData = {
+    ...data,
+    results: [
+      {
+        path: "newest/project",
+        grade: 0,
+        type: "assessment",
+        createdAt: "2026-07-30T12:00:00Z",
+      },
+      {
+        path: "older/project",
+        grade: 1,
+        type: "assessment",
+        createdAt: "2026-07-29T12:00:00Z",
+      },
+    ],
+  };
+
+  UpdateSectionState("results");
+  renderDataSection(resultsData);
+
+  assert.equal(elements.get("results-section").hidden, false);
+  assert.equal(elements.get("results-page-size").value, "1");
+  assert.equal(
+    elements.get("results-page-indicator").textContent,
+    "Page 1 of 2",
+  );
+  assert.equal(
+    elements.get("results-range").textContent,
+    "Showing 1–1 of 2",
+  );
+  assert.equal(elements.get("results-previous").disabled, true);
+  assert.equal(elements.get("results-next").disabled, false);
+
+  const firstItem = elements.get("results-list").children[0];
+  assert.equal(firstItem.children[0].textContent, "30th July 2026");
+  assert.equal(firstItem.children[0].attributes.datetime, "2026-07-30T12:00:00Z");
+  assert.equal(firstItem.children[1].textContent, "Project: newest/project");
+  assert.equal(firstItem.children[2].textContent, "Failed");
+  assert.equal(firstItem.children[3].textContent, "Type: assessment");
+  assert.equal(elements.get("results-date-toggle").textContent, "Show timestamps");
+
+  elements.get("results-date-toggle").eventListeners.click();
+
+  const timestampItem = elements.get("results-list").children[0];
+  assert.equal(timestampItem.children[0].textContent, "2026-07-30T12:00:00Z");
+  assert.equal(elements.get("results-date-toggle").textContent, "Show dates");
+
+  elements.get("results-date-toggle").eventListeners.click();
+  elements.get("results-next").eventListeners.click();
+
+  const secondItem = elements.get("results-list").children[0];
+  assert.equal(secondItem.children[0].textContent, "29th July 2026");
+  assert.equal(secondItem.children[1].textContent, "Project: older/project");
+  assert.equal(secondItem.children[2].textContent, "Passed");
+  assert.equal(
+    elements.get("results-page-indicator").textContent,
+    "Page 2 of 2",
+  );
+  assert.equal(
+    elements.get("results-range").textContent,
+    "Showing 2–2 of 2",
+  );
+  assert.equal(elements.get("results-previous").disabled, false);
+  assert.equal(elements.get("results-next").disabled, true);
+
+  elements.get("results-page-size").value = "5";
+  elements.get("results-page-size").eventListeners.change();
+
+  assert.equal(elements.get("results-list").children.length, 2);
+  assert.equal(
+    elements.get("results-page-indicator").textContent,
+    "Page 1 of 1",
+  );
+  assert.equal(
+    elements.get("results-range").textContent,
+    "Showing 1–2 of 2",
+  );
+  assert.equal(elements.get("results-previous").disabled, true);
+  assert.equal(elements.get("results-next").disabled, true);
+
+  const emptyResultsData = { ...resultsData, results: [] };
+  renderDataSection(emptyResultsData);
+
+  assert.equal(elements.get("results-list").children.length, 0);
+  assert.equal(
+    elements.get("results-page-indicator").textContent,
+    "Page 1 of 1",
+  );
+  assert.equal(
+    elements.get("results-range").textContent,
+    "Showing 0–0 of 0",
+  );
+  assert.equal(elements.get("results-date-toggle").textContent, "Show timestamps");
+  assert.equal(elements.get("results-previous").disabled, true);
+  assert.equal(elements.get("results-next").disabled, true);
 } finally {
   globalThis.document = originalDocument;
 }

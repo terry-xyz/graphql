@@ -42,6 +42,7 @@ const elementIds = [
   "navbar-identity",
   "navbar-xpLevel",
   "navbar-audits",
+  "navbar-results",
   "login-form",
   "login-identifier",
   "login-password",
@@ -64,6 +65,14 @@ const elementIds = [
   "audits-bonusXp",
   "audits-warning",
   "audits-chart",
+  "results-section",
+  "results-date-toggle",
+  "results-list",
+  "results-page-size",
+  "results-page-indicator",
+  "results-previous",
+  "results-next",
+  "results-range",
   "logout-button",
 ];
 

@@ -174,6 +174,7 @@ query MaxProfileData($userId: Int!) {
     }
   }
 
+  # The renderer pages this newest-first list locally, so the first page always starts with the latest result.
   results: result(
     limit: 500
     order_by: { createdAt: desc }
@@ -191,26 +192,5 @@ query MaxProfileData($userId: Int!) {
     updatedAt
   }
 
-  passedResults: result_aggregate(
-    where: {
-      userId: { _eq: $userId }
-      grade: { _gte: 1 }
-    }
-  ) {
-    aggregate {
-      count
-    }
-  }
-
-  failedResults: result_aggregate(
-    where: {
-      userId: { _eq: $userId }
-      grade: { _lt: 1 }
-    }
-  ) {
-    aggregate {
-      count
-    }
-  }
 }
 `

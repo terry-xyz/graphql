@@ -8,7 +8,7 @@
     <meta name="referrer" content="no-referrer">
     <meta http-equiv="Content-Security-Policy"
         content="default-src 'self'; connect-src https://platform.zone01.gr; style-src 'self'; script-src 'self'; img-src 'self' data:; object-src 'none'; base-uri 'self'; form-action 'self'">
-    <link rel="stylesheet" href="src/style.css">
+    <link rel="stylesheet" href="src/style.css?v=3">
     <title>GraphQL Profile Dashboard</title>
 </head>
 
@@ -17,6 +17,7 @@
         <button id="navbar-identity" type="button">Identity</button>
         <button id="navbar-xpLevel" type="button">XP / Level</button>
         <button id="navbar-audits" type="button">Audits</button>
+        <button id="navbar-results" type="button">Results</button>
     </nav>
 
     <h1>GraphQL Profile Dashboard</h1>
@@ -65,6 +66,47 @@
         <!-- JavaScript measures the labels and scales both audit bars within this 600-by-100 coordinate system. -->
         <svg id="audits-chart" viewBox="0 0 600 100" role="img"
             aria-label="Comparison of XP given and XP received"></svg>
+    </section>
+
+    <section id="results-section" hidden>
+        <h2>Results</h2>
+
+        <div class="results-toolbar" aria-label="Result controls">
+            <div class="results-toolbar-main">
+                <label class="results-page-size-control" for="results-page-size">
+                    Results per page
+                    <select id="results-page-size">
+                        <option value="1" selected>1</option>
+                        <option value="5">5</option>
+                        <option value="10">10</option>
+                        <option value="25">25</option>
+                        <option value="100">100</option>
+                    </select>
+                </label>
+
+                <button id="results-date-toggle" type="button">
+                    Show timestamps
+                </button>
+            </div>
+
+            <div class="results-toolbar-pagination">
+                <p id="results-range">Showing 0–0 of 0</p>
+
+                <div class="results-pagination" aria-label="Results pages">
+                    <button id="results-previous" type="button" aria-label="Previous results page" disabled>
+                        ←
+                    </button>
+
+                    <span id="results-page-indicator">Page 1 of 1</span>
+
+                    <button id="results-next" type="button" aria-label="Next results page">
+                        →
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <ul id="results-list" class="results-list"></ul>
     </section>
 
     <button id="logout-button" type="button">Logout</button>
