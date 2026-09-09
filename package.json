@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node tests/login-selectors.test.mjs && node tests/auth.test.mjs && node tests/graphql.test.mjs && node tests/config.test.mjs && node tests/renderer.test.mjs && node tests/main-navigation.test.mjs && node tests/main-auth-flow.test.mjs",
+    "test": "node tests/login-selectors.test.mjs && node tests/auth.test.mjs && node tests/session.test.mjs && node tests/graphql.test.mjs && node tests/config.test.mjs && node tests/renderer.test.mjs && node tests/main-navigation.test.mjs && node tests/main-auth-flow.test.mjs",
     "check": "npm test && node --check src/auth.js && node --check src/config.js && node --check src/graphql.js && node --check src/main.js && node --check src/renderer.js"
   },
   "repository": {
