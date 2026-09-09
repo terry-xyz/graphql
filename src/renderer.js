@@ -33,6 +33,13 @@ const LogoutButton = document.querySelector("#logout-button");
 
 // renderDataSection hides the previous page section and renders the section selected from the navbar.
 export function renderDataSection(data, section = CURRENT_SECTION) {
+    if (!data) {
+        IdentitySection.hidden = true;
+        XpLevelSection.hidden = true;
+        AuditsSection.hidden = true;
+        return;
+    }
+
     if (PREVIOUS_SECTION !== "") {
         // Section IDs follow the "name-section" pattern, so the stored name can find the previous section.
         document.querySelector(`#${PREVIOUS_SECTION}-section`).hidden = true;

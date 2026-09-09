@@ -31,8 +31,15 @@ function setProfileControlsDisabled(disabled) {
     }
 }
 
+function setProfileControlsVisible(visible) {
+    for (const control of profileControls) {
+        control.hidden = !visible;
+    }
+}
+
 // The profile starts empty, so controls must wait until loadProfile has populated maxIdentityData.
 setProfileControlsDisabled(true);
+setProfileControlsVisible(false);
 
 // loadProfile fetches the basic identity and extended profile data, then enables controls after rendering it.
 async function loadProfile() {
@@ -47,6 +54,7 @@ async function loadProfile() {
 
     // Rendering comes first so an enabled control always has the data it needs.
     setProfileControlsDisabled(false);
+    setProfileControlsVisible(true);
 }
 
 // log-in process
@@ -77,6 +85,8 @@ LogInForm.addEventListener("submit", async e => {
 
         await loadProfile();
     } catch (error) {
+        clearToken();
+        LogInForm.hidden = false;
         LogInFeedback.textContent = error.message;
     }
 });
@@ -84,6 +94,9 @@ LogInForm.addEventListener("submit", async e => {
 // log-out process
 LogoutButton.addEventListener("click", e => {
     clearToken();
+    maxIdentityData = null;
+    setProfileControlsDisabled(true);
+    setProfileControlsVisible(false);
 
     renderDataSection();
 
