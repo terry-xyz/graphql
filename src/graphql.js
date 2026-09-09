@@ -1,5 +1,5 @@
 import { API_BASE_URL, API_GRAPHQL_ENDPOINT } from "./config.js";
-import { getToken } from "./session.js";
+import { getToken, clearToken } from "./session.js";
 
 export async function graphqlRequest(query, variables) {
     const token = getToken();
@@ -27,6 +27,11 @@ export async function graphqlRequest(query, variables) {
     }
 
     let result;
+
+    if (response.status === 401 || response.status === 403) {
+        clearToken();
+        throw new Error("Your session has expired. Please log in again.");
+    }
 
     try {
         result = await response.json();
