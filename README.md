@@ -33,6 +33,7 @@ The Zone01 API endpoints are defined in [`src/config.js`](src/config.js). No API
 ## Project layout
 
 - [`index.html`](index.html) — browser entrypoint and accessible page structure
+- [`assets/backgrounds/`](assets/backgrounds) — locally hosted images used by the interactive page background
 - [`src/`](src) — authentication, GraphQL access, rendering, and styles
 - [`tests/`](tests) — dependency-free Node.js tests
 - [`docs/`](docs) — project notes and original assignment material

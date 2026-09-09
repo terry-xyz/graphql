@@ -1,4 +1,5 @@
 import { signIn } from "./auth.js";
+import { initializeSpotlightBackground } from "./background.js";
 import { basicQuery, maxIdentityDataQuery, UpdateSectionState } from "./config.js";
 import { graphqlRequest } from "./graphql.js";
 import { renderDataSection } from "./renderer.js";
@@ -16,6 +17,8 @@ const LogInFeedback = document.querySelector("#login-feedback");
 const LogoutButton = document.querySelector("#logout-button");
 
 let maxIdentityData = null;
+
+initializeSpotlightBackground();
 
 // Profile navigation and logout depend on loaded profile data, so keep them together for the loading gate.
 const profileControls = [
