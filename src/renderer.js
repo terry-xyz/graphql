@@ -67,9 +67,9 @@ function renderXpLevelSection(data) {
 
     XpLevelSection.hidden = false;
     // These paths match the aliases and nested fields requested by maxIdentityDataQuery in config.js.
-    XpLevelTotalXp.textContent = data.xpTotal.aggregate.sum.amount ?? "Not available";
-    XpLevelCurrentMaxLevel.textContent = data.levelTransactions[0].amount ?? "Not available";
-    XpLevelBiggestXpGain.textContent = data.xpTotal.aggregate.max.amount ?? "Not available";
+    XpLevelTotalXp.textContent = data.xpTotal.aggregate.sum?.amount ?? "Not available";
+    XpLevelCurrentMaxLevel.textContent = data.levelTransactions[0]?.amount ?? "Not available";
+    XpLevelBiggestXpGain.textContent = data.xpTotal.aggregate.max?.amount ?? "Not available";
 
     renderXpChart(XpChart, data.xpTransactions);
 }
@@ -82,10 +82,10 @@ function renderIdentitySection(data) {
     }
 
     IdentitySection.hidden = false;
-    IdentityFirstName.textContent = data.user.attrs.firstName ?? "Not available";
-    IdentityLastName.textContent = data.user.attrs.lastName ?? "Not available";
+    IdentityFirstName.textContent = data.user.attrs?.firstName ?? "Not available";
+    IdentityLastName.textContent = data.user.attrs?.lastName ?? "Not available";
     IdentityLogin.textContent = data.user.login ?? "Not available";
-    IdentityEmail.textContent = data.user.attrs.email ?? "Not available";
+    IdentityEmail.textContent = data.user.attrs?.email ?? "Not available";
     IdentityCampus.textContent = data.user.campus ?? "Not available";
 };
 
@@ -93,12 +93,15 @@ function renderIdentitySection(data) {
 function renderAuditsSection(data) {
     AuditsSection.hidden = false;
 
-    const ratio = Number(`${data.user.auditRatio}`)
+    const ratio = Number(data.user.auditRatio);
 
-    AuditsRatio.textContent = ratio.toFixed(1) ?? "Not available";
-    AuditsXpGiven.textContent = formatXp(data.user.totalUp ?? "Not available");
-    AuditsXpReceived.textContent = formatXp(data.user.totalDown ?? "Not available");
-    AuditsBonusXp.textContent = formatXp(data.user.totalUpBonus ?? "Not available");
+    AuditsRatio.textContent =
+        Number.isFinite(ratio) && data.user.auditRatio != null
+            ? ratio.toFixed(1)
+            : "Not available";
+    AuditsXpGiven.textContent = formatXp(data.user.totalUp);
+    AuditsXpReceived.textContent = formatXp(data.user.totalDown);
+    AuditsBonusXp.textContent = formatXp(data.user.totalUpBonus);
 
     // A ratio below 1 means the student has received more audit value than they have given back.
     if (ratio < 1) {

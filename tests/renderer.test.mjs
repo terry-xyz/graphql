@@ -194,6 +194,103 @@ try {
     "Warning: your audit ratio is below 1. Complete more audits to improve it.",
   );
   assert.equal(elements.get("audits-warning").className, "audit-warning");
+
+  // New users may have no level transactions yet, so the XP / Level view must render without indexing an empty array.
+  const newUserData = {
+    user: {
+      login: "new-student",
+      campus: "athens",
+      attrs: {},
+      auditRatio: null,
+      totalUp: null,
+      totalDown: null,
+      totalUpBonus: null,
+    },
+    xpTotal: {
+      aggregate: {
+        sum: { amount: null },
+        max: { amount: null },
+      },
+    },
+    levelTransactions: [],
+    xpTransactions: [],
+  };
+
+  UpdateSectionState("xpLevel");
+  assert.doesNotThrow(
+    () => renderDataSection(newUserData),
+    "The XP / Level view should tolerate a user with no level transactions",
+  );
+
+  // A user with no XP yet may have null aggregate objects, so rendering must fall back instead of dereferencing null.
+  const noXpAggregateData = {
+    ...newUserData,
+    xpTotal: {
+      aggregate: {
+        sum: null,
+        max: null,
+      },
+    },
+    levelTransactions: [{ amount: 1 }],
+  };
+
+  UpdateSectionState("audits");
+  renderDataSection(data);
+  UpdateSectionState("xpLevel");
+  assert.doesNotThrow(
+    () => renderDataSection(noXpAggregateData),
+    "The XP / Level view should tolerate missing XP aggregates",
+  );
+
+  // Some profiles may not include attrs, so the Identity view must preserve its fallback behavior without dereferencing null.
+  const missingAttributesData = {
+    ...data,
+    user: {
+      ...data.user,
+      attrs: null,
+    },
+  };
+
+  UpdateSectionState("audits");
+  renderDataSection(data);
+  UpdateSectionState("identity");
+  assert.doesNotThrow(
+    () => renderDataSection(missingAttributesData),
+    "The Identity view should tolerate missing user attributes",
+  );
+
+  // A missing audit ratio should use the dashboard fallback instead of exposing the calculation's NaN result to the user.
+  const missingRatioData = {
+    ...data,
+    user: {
+      ...data.user,
+      auditRatio: null,
+    },
+  };
+
+  UpdateSectionState("audits");
+  renderDataSection(missingRatioData);
+  assert.equal(
+    elements.get("audits-ratio").textContent,
+    "Not available",
+    "The Audits view should show a fallback when the audit ratio is missing",
+  );
+
+  // Missing audit totals should remain readable instead of passing a fallback string into numeric formatting.
+  const missingAuditTotalsData = {
+    ...data,
+    user: {
+      ...data.user,
+      totalUp: null,
+      totalDown: null,
+      totalUpBonus: null,
+    },
+  };
+
+  renderDataSection(missingAuditTotalsData);
+  assert.equal(elements.get("audits-xpGiven").textContent, "Not available");
+  assert.equal(elements.get("audits-xpReceived").textContent, "Not available");
+  assert.equal(elements.get("audits-bonusXp").textContent, "Not available");
 } finally {
   globalThis.document = originalDocument;
 }
