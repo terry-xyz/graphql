@@ -1,6 +1,7 @@
 # GraphQL Profile Dashboard
 
 [![CI](https://github.com/terry-xyz/graphql/actions/workflows/ci.yml/badge.svg)](https://github.com/terry-xyz/graphql/actions/workflows/ci.yml)
+[![zone01-graphql on npm](https://nodei.co/npm/zone01-graphql.svg?style=standard&data=s,d&color=blue)](https://www.npmjs.com/package/zone01-graphql)
 
 A browser-based profile dashboard for the Zone01 platform. It authenticates with the Zone01 API, then displays identity details, XP progression, and audit statistics with SVG charts.
 
