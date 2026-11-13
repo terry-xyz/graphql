@@ -5,6 +5,8 @@
 
 A browser-based profile dashboard for the Zone01 platform. It authenticates with the Zone01 API, then displays identity details, XP progression, and audit statistics with SVG charts.
 
+The dashboard is live on [GitHub Pages](https://terry-xyz.github.io/graphql/).
+
 ## Requirements
 
 - Node.js 20 or newer for checks
