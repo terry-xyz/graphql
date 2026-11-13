@@ -190,6 +190,19 @@
     font: inherit;
 }
 
+#results-page-size {
+    min-width: 5rem;
+    font-weight: 700;
+    color-scheme: dark;
+    cursor: pointer;
+}
+
+#results-page-size option {
+    color: #f5f4ef;
+    background: #111719;
+    font-weight: 700;
+}
+
 #results-section button {
     cursor: pointer;
     font-weight: 650;

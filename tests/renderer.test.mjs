@@ -55,7 +55,7 @@ const elements = new Map(
     ["xpLevel-currentMaxLevel", createElement("xpLevel-currentMaxLevel", false)],
     ["xpLevel-biggestXpGain", createElement("xpLevel-biggestXpGain", false)],
     ["xp-chart", createElement("xp-chart", false, "svg")],
-    ["audits-section", createElement("audits-section", true)],
+    ["statistics-section", createElement("statistics-section", true)],
     ["audits-ratio", createElement("audits-ratio", false)],
     ["audits-xpGiven", createElement("audits-xpGiven", false)],
     ["audits-xpReceived", createElement("audits-xpReceived", false)],
@@ -141,6 +141,15 @@ try {
 
   assert.equal(elements.get("identity-section").hidden, true);
   assert.equal(elements.get("xpLevel-section").hidden, false);
+  assert.equal(elements.get("audits-ratio").textContent, "0.7");
+  assert.equal(elements.get("audits-xpGiven").textContent, "266.00 kB");
+  assert.equal(elements.get("audits-xpReceived").textContent, "360.00 kB");
+  assert.equal(elements.get("audits-bonusXp").textContent, "4.10 kB");
+
+  UpdateSectionState("statistics");
+  renderDataSection(data);
+  assert.equal(elements.get("xpLevel-section").hidden, true);
+  assert.equal(elements.get("statistics-section").hidden, false);
   assert.equal(elements.get("xpLevel-totalXp").textContent, "1815857");
   assert.equal(elements.get("xpLevel-currentMaxLevel").textContent, "32");
   assert.equal(elements.get("xpLevel-biggestXpGain").textContent, "76250");
@@ -192,11 +201,10 @@ try {
   xpMarkerHitAreas[0].eventListeners.mouseleave();
   assert.equal(xpTooltip.attributes.visibility, "hidden");
 
-  UpdateSectionState("audits");
+  UpdateSectionState("xpLevel");
   renderDataSection(data);
-
-  assert.equal(elements.get("xpLevel-section").hidden, true);
-  assert.equal(elements.get("audits-section").hidden, false);
+  assert.equal(elements.get("statistics-section").hidden, true);
+  assert.equal(elements.get("xpLevel-section").hidden, false);
   assert.equal(elements.get("audits-ratio").textContent, "0.7");
   assert.equal(elements.get("audits-xpGiven").textContent, "266.00 kB");
   assert.equal(elements.get("audits-xpReceived").textContent, "360.00 kB");
@@ -246,7 +254,7 @@ try {
     levelTransactions: [{ amount: 1 }],
   };
 
-  UpdateSectionState("audits");
+  UpdateSectionState("statistics");
   renderDataSection(data);
   UpdateSectionState("xpLevel");
   assert.doesNotThrow(
@@ -263,7 +271,7 @@ try {
     },
   };
 
-  UpdateSectionState("audits");
+  UpdateSectionState("xpLevel");
   renderDataSection(data);
   UpdateSectionState("identity");
   assert.doesNotThrow(
@@ -280,7 +288,7 @@ try {
     },
   };
 
-  UpdateSectionState("audits");
+  UpdateSectionState("xpLevel");
   renderDataSection(missingRatioData);
   assert.equal(
     elements.get("audits-ratio").textContent,
@@ -299,6 +307,9 @@ try {
     },
   };
 
+  UpdateSectionState("statistics");
+  renderDataSection(data);
+  UpdateSectionState("xpLevel");
   renderDataSection(missingAuditTotalsData);
   assert.equal(elements.get("audits-xpGiven").textContent, "Not available");
   assert.equal(elements.get("audits-xpReceived").textContent, "Not available");
@@ -334,7 +345,7 @@ try {
   );
   assert.equal(
     elements.get("results-range").textContent,
-    "Showing 1–1 of 2",
+    "Showing 1 of 2",
   );
   assert.equal(elements.get("results-previous").disabled, true);
   assert.equal(elements.get("results-next").disabled, false);
@@ -366,7 +377,7 @@ try {
   );
   assert.equal(
     elements.get("results-range").textContent,
-    "Showing 2–2 of 2",
+    "Showing 2 of 2",
   );
   assert.equal(elements.get("results-previous").disabled, false);
   assert.equal(elements.get("results-next").disabled, true);
@@ -381,7 +392,7 @@ try {
   );
   assert.equal(
     elements.get("results-range").textContent,
-    "Showing 1–2 of 2",
+    "Showing 2 of 2",
   );
   assert.equal(elements.get("results-previous").disabled, true);
   assert.equal(elements.get("results-next").disabled, true);
@@ -396,7 +407,7 @@ try {
   );
   assert.equal(
     elements.get("results-range").textContent,
-    "Showing 0–0 of 0",
+    "Showing 0 of 0",
   );
   assert.equal(elements.get("results-date-toggle").textContent, "Show timestamps");
   assert.equal(elements.get("results-previous").disabled, true);

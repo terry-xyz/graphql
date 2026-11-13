@@ -8,7 +8,7 @@ import { saveToken, getToken, clearToken } from "./session.js";
 const NavbarResults = document.querySelector("#navbar-results");
 const NavbarIdentity = document.querySelector("#navbar-identity");
 const NavbarXpLevel = document.querySelector("#navbar-xpLevel");
-const NavbarAudits = document.querySelector("#navbar-audits");
+const NavbarStatistics = document.querySelector("#navbar-statistics");
 
 const LogInForm = document.querySelector("#login-form");
 const LogInIdentifier = document.querySelector("#login-identifier");
@@ -24,7 +24,7 @@ initializeSpotlightBackground();
 const profileControls = [
     NavbarIdentity,
     NavbarXpLevel,
-    NavbarAudits,
+    NavbarStatistics,
     NavbarResults,
     LogoutButton,
 ];
@@ -139,14 +139,13 @@ function handleXpLevelNavigation() {
 
 NavbarXpLevel.addEventListener("click", handleXpLevelNavigation);
 
-// handleAuditsNavigation selects the audits view while reusing the profile fetched during login.
-function handleAuditsNavigation() {
-    UpdateSectionState("audits");
-
+// handleStatisticsNavigation opens the dedicated section containing both SVG charts.
+function handleStatisticsNavigation() {
+    UpdateSectionState("statistics");
     renderDataSection(maxIdentityData);
 }
 
-NavbarAudits.addEventListener("click", handleAuditsNavigation);
+NavbarStatistics.addEventListener("click", handleStatisticsNavigation);
 
 // handleResultsNavigation selects the Results view while reusing the profile fetched during login.
 function handleResultsNavigation() {

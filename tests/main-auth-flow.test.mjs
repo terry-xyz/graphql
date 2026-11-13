@@ -41,7 +41,7 @@ function createElement(id, hidden = true) {
 const elementIds = [
   "navbar-identity",
   "navbar-xpLevel",
-  "navbar-audits",
+  "navbar-statistics",
   "navbar-results",
   "login-form",
   "login-identifier",
@@ -58,7 +58,7 @@ const elementIds = [
   "xpLevel-currentMaxLevel",
   "xpLevel-biggestXpGain",
   "xp-chart",
-  "audits-section",
+  "statistics-section",
   "audits-ratio",
   "audits-xpGiven",
   "audits-xpReceived",
@@ -183,7 +183,7 @@ try {
   assert.equal(cookieValue, "", "A failed profile load should clear the JWT");
   assert.equal(elements.get("navbar-identity").hidden, true);
   assert.equal(elements.get("navbar-xpLevel").hidden, true);
-  assert.equal(elements.get("navbar-audits").hidden, true);
+  assert.equal(elements.get("navbar-statistics").hidden, true);
   assert.equal(elements.get("logout-button").hidden, true);
 
   profileRequestsFail = false;
@@ -204,11 +204,11 @@ try {
   assert.equal(cookieValue, "", "Logout should clear the JWT");
   assert.equal(elements.get("navbar-identity").hidden, true);
   assert.equal(elements.get("navbar-xpLevel").hidden, true);
-  assert.equal(elements.get("navbar-audits").hidden, true);
+  assert.equal(elements.get("navbar-statistics").hidden, true);
   assert.equal(elements.get("logout-button").hidden, true);
   assert.equal(elements.get("identity-section").hidden, true);
   assert.equal(elements.get("xpLevel-section").hidden, true);
-  assert.equal(elements.get("audits-section").hidden, true);
+  assert.equal(elements.get("statistics-section").hidden, true);
 } finally {
   globalThis.document = originalDocument;
   globalThis.fetch = originalFetch;

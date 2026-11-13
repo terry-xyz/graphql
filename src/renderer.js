@@ -15,8 +15,8 @@ const XpLevelTotalXp = document.querySelector("#xpLevel-totalXp");
 const XpLevelCurrentMaxLevel = document.querySelector("#xpLevel-currentMaxLevel");
 const XpLevelBiggestXpGain = document.querySelector("#xpLevel-biggestXpGain");
 const XpChart = document.querySelector("#xp-chart");
+const StatisticsSection = document.querySelector("#statistics-section");
 
-const AuditsSection = document.querySelector("#audits-section");
 const AuditsRatio = document.querySelector("#audits-ratio");
 const AuditsXpGiven = document.querySelector("#audits-xpGiven");
 const AuditsXpReceived = document.querySelector("#audits-xpReceived");
@@ -75,7 +75,7 @@ export function renderDataSection(data, section = CURRENT_SECTION) {
     if (!data) {
         IdentitySection.hidden = true;
         XpLevelSection.hidden = true;
-        AuditsSection.hidden = true;
+        StatisticsSection.hidden = true;
         ResultsSection.hidden = true;
         return;
     }
@@ -93,7 +93,10 @@ export function renderDataSection(data, section = CURRENT_SECTION) {
             renderXpLevelSection(data);
             break;
         case "audits":
-            renderAuditsSection(data);
+            renderXpLevelSection(data);
+            break;
+        case "statistics":
+            renderStatisticsSection(data);
             break;
         case "results":
             renderResultsSection(data);
@@ -101,7 +104,7 @@ export function renderDataSection(data, section = CURRENT_SECTION) {
     };
 };
 
-// renderXpLevelSection displays XP summary fields and passes the API transaction history to the line chart.
+// renderXpLevelSection displays XP and audit summaries together as the combined required data section.
 function renderXpLevelSection(data) {
     if (XpLevelSection.hidden === false) {
         XpLevelSection.hidden = true;
@@ -114,7 +117,7 @@ function renderXpLevelSection(data) {
     XpLevelCurrentMaxLevel.textContent = data.levelTransactions[0]?.amount ?? "Not available";
     XpLevelBiggestXpGain.textContent = data.xpTotal.aggregate.max?.amount ?? "Not available";
 
-    renderXpChart(XpChart, data.xpTransactions);
+    renderAuditSummary(data);
 }
 
 // renderIdentitySection displays the logged-in student's profile fields returned by the GraphQL user query.
@@ -132,10 +135,8 @@ function renderIdentitySection(data) {
     IdentityCampus.textContent = data.user.campus ?? "Not available";
 };
 
-// renderAuditsSection displays audit totals, warns about low ratios, and draws their comparison chart.
-function renderAuditsSection(data) {
-    AuditsSection.hidden = false;
-
+// renderAuditSummary displays audit totals and warns when the returned ratio is below one.
+function renderAuditSummary(data) {
     const ratio = Number(data.user.auditRatio);
 
     AuditsRatio.textContent =
@@ -159,6 +160,12 @@ function renderAuditsSection(data) {
         AuditsWarning.className = "audit-success";
     }
 
+}
+
+// renderStatisticsSection places both SVG visualizations together in the dedicated fourth section.
+function renderStatisticsSection(data) {
+    StatisticsSection.hidden = false;
+    renderXpChart(XpChart, data.xpTransactions);
     renderAuditsChart(AuditsChart, data.user.totalUp, data.user.totalDown);
 }
 
@@ -225,10 +232,7 @@ function renderResultsPage() {
     ResultsPageIndicator.textContent =
         `Page ${currentResultsPage} of ${totalPages}`;
     ResultsRange.textContent =
-        `Showing ${currentResults.length === 0 ? 0 : startIndex + 1}–${Math.min(
-            startIndex + pageSize,
-            currentResults.length,
-        )} of ${currentResults.length}`;
+        `Showing ${startIndex + visibleResults.length} of ${currentResults.length}`;
     ResultsDateToggle.textContent = showingResultTimestamps
         ? "Show dates"
         : "Show timestamps";

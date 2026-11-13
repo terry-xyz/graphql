@@ -7,13 +7,13 @@ const html = readFileSync(new URL("../index.html", import.meta.url), "utf8");
 assert.match(main, /graphqlRequest\(maxIdentityDataQuery,\s*{\s*userId:\s*user\.id,\s*}\)/s);
 assert.match(main, /UpdateSectionState\("identity"\)/);
 assert.match(main, /UpdateSectionState\("xpLevel"\)/);
-assert.match(main, /UpdateSectionState\("audits"\)/);
+assert.match(main, /UpdateSectionState\("statistics"\)/);
 assert.match(main, /renderDataSection\(maxIdentityData\)/);
 
 for (const id of [
   "navbar-identity",
   "navbar-xpLevel",
-  "navbar-audits",
+  "navbar-statistics",
   "identity-section",
   "identity-firstName",
   "identity-lastName",
@@ -24,7 +24,7 @@ for (const id of [
   "xpLevel-totalXp",
   "xpLevel-currentMaxLevel",
   "xpLevel-biggestXpGain",
-  "audits-section",
+  "statistics-section",
   "audits-ratio",
   "audits-xpGiven",
   "audits-xpReceived",
